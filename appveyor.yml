@@ -1,18 +1,14 @@
-branches:
- only:
-  - master
-
 version: "0.0.1.{build}"
 
 install:
-
+  
   - cd ..
   - git clone https://github.com/T4mmi/ITKBinaryThinning3D
   - cd ITKBinaryThinning3D
   - curl -L https://raw.githubusercontent.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/windows-download-cache-and-build-module-wheels.ps1 -O
   - ps: .\windows-download-cache-and-build-module-wheels.ps1
-  - cd ..\ITKBinaryThinning3D
-  - ps: .\windows-download-cache-and-build-module-wheels.ps1
+  - cd ..\ITKThickness3D
+  - python C:\P\IPP\scripts\windows_build_module_wheels.py
 
 build: off
 
@@ -22,5 +18,3 @@ artifacts:
 
   # pushing entire folder as a zip archive
   - path: dist\*
-
-deploy: off

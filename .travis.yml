@@ -15,9 +15,6 @@ script:
 - chmod u+x macpython-download-cache-and-build-module-wheels.sh
 - ./macpython-download-cache-and-build-module-wheels.sh
 - popd; popd
-- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 2.7
-- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.5
-- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.6
-- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.7
+- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 2.7 3.5 3.6 3.7
 - tar -zcvf dist.tar.gz dist/
 - curl --upload-file dist.tar.gz https://transfer.sh/dist.tar.gz

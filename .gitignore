@@ -1,0 +1,34 @@
+# Do not add ExternalData module staging files
+.ExternalData*
+
+# back-up files
+*~
+*.bak
+*.orig
+
+# KWStyle hook output
+*.kws
+
+# compiled python files
+*.pyc
+*.egg-info
+
+# Binary directory
+BUILD*
+build*
+dist*
+
+# IDE config
+*.kdev*
+.kdev*
+.vscode*
+.atom*
+
+# CMake
+CMakeLists.txt.user*
+CMakeCache.txt
+CMakeFiles*
+
+# OS temp
+.DS_Store
+

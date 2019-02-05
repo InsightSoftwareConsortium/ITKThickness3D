@@ -1,0 +1,23 @@
+sudo: true
+language: cpp
+os:
+- osx
+compiler:
+- gcc
+cache:
+  directories:
+    - "$HOME/Library/Caches/Homebrew"
+script:
+- pushd ..
+- git clone https://github.com/T4mmi/ITKBinaryThinning3D
+- pushd ITKBinaryThinning3D
+- curl -L https://raw.githubusercontent.com/InsightSoftwareConsortium/ITKPythonPackage/master/scripts/macpython-download-cache-and-build-module-wheels.sh -O
+- chmod u+x macpython-download-cache-and-build-module-wheels.sh
+- ./macpython-download-cache-and-build-module-wheels.sh
+- popd; popd
+- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 2.7
+- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.5
+- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.6
+- /Users/Kitware/Dashboards/ITK/ITKPythonPackage/scripts/macpython-build-module-wheels.sh 3.7
+- tar -zcvf dist.tar.gz dist/
+- curl --upload-file dist.tar.gz https://transfer.sh/dist.tar.gz

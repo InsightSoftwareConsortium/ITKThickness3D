@@ -18,7 +18,7 @@ This contribution implements a composite filter based on the euclidean distance 
 Overview
 --------
 
-This is a module for the [Insight Toolkit (ITK)](http://itk.org) that provides filters that compute the thickness of a 3D image. It is build on top of [ITKBinaryThinning3D](https://github.com/T4mmi/ITKBinaryThinning3D).
+This is a module for the [Insight Toolkit (ITK)](http://itk.org) that provides filters that compute the thickness of a 3D image. It is built on top of [ITKBinaryThinning3D](https://github.com/T4mmi/ITKBinaryThinning3D).
 
 The idea behind the **medial thickness** as implemented in this module is *the shortest distance from the outside to the object medial axis*. The **local thickness** is the medial thickness retropropagated to the neighbors (*work in progress*).
 

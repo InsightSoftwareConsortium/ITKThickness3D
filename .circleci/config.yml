@@ -70,6 +70,7 @@ jobs:
             cd ~/ITKThickness3D
             mv ~/ITKBinaryThinning3D/ITKPythonPackage .
             mv ~/ITKBinaryThinning3D/tools .
+            cp ~/ITKBinaryThinning3D/include/* ./include/
             ./ITKPythonPackage/scripts/dockcross-manylinux-build-module-wheels.sh
       - store_artifacts:
           path: dist

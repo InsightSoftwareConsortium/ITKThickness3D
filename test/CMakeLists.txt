@@ -5,7 +5,7 @@ itk_module_test()
 
 set(${itk-module}Tests
   itkBinaryThinningImageFilter3DTest.cxx  
-  # itkMedialThicknessImageFilter3DTest.cxx
+  itkMedialThicknessImageFilter3DTest.cxx
 )
 
 CreateTestDriver(${itk-module}  "${${itk-module}-Test_LIBRARIES}" "${${itk-module}Tests}")
@@ -16,8 +16,8 @@ itk_add_test(NAME itkBinaryThinningImageFilter3DTest
   DATA{Input/input.tiff} ${ITK_TEST_OUTPUT_DIR}/skeleton.tiff
 )
 
-# itk_add_test(NAME itkMedialThicknessImageFilter3DTest
-#   COMMAND ${itk-module}TestDriver
-#   itkMedialThicknessImageFilter3DTest
-#   DATA{Input/input.tiff} ${ITK_TEST_OUTPUT_DIR}/medial_thickness.tiff
-# )
+itk_add_test(NAME itkMedialThicknessImageFilter3DTest
+  COMMAND ${itk-module}TestDriver
+  itkMedialThicknessImageFilter3DTest
+  DATA{Input/input.tiff} ${ITK_TEST_OUTPUT_DIR}/medial_thickness.tiff
+)

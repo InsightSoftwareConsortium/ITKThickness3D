@@ -13,19 +13,19 @@ except ImportError:
 
 setup(
     name='itk-thickness3d',
-    version='5.0a1',
+    version='5.1b1',
     author='Insight Software Consortium',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],
     package_dir={'itk': 'itk'},
     download_url=r'https://github.com/InsightSoftwareConsortium/ITKThickness3D',
     description=r'An ITK module to compute 3D thickness',
-    long_description='ITK currently comes without a hands on solution for 3D thickness evaluation. This contribution implements a composite filter based on SignedMaurerDistanceMapImageFilter and BinaryLocalThicknessImageFilter to fill this blank.',
+    long_description='ITK currently comes without a hands on solution for 3D thickness evaluation. This contribution implements several filters to adress such issues.',
     classifiers=[
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: C++",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         "Intended Audience :: Healthcare Industry",

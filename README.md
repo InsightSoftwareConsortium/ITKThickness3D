@@ -18,15 +18,13 @@ This contribution implements a composite filter based on the euclidean distance 
 Overview
 --------
 
-This is a module for the [Insight Toolkit (ITK)](http://itk.org) that
-provides filters that compute the thickness of a 3D image.
+This is a module for the [Insight Toolkit (ITK)](http://itk.org) that provides filters that compute the thickness of a 3D image. It is build on top of [ITKBinaryThinning3D](https://github.com/T4mmi/ITKBinaryThinning3D).
 
 The idea behind the **medial thickness** as implemented in this module is *the shortest distance from the outside to the object medial axis*. The **local thickness** is the medial thickness retropropagated to the neighbors (*work in progress*).
 
 
 ### Filters
-- **`itk::BinaryThinningImageFilter3D<TInputImage, TOutputImage>`**: The 3D skeleton filter from [ITKBinaryThinning3D](https://github.com/T4mmi/ITKBinaryThinning3D).
--   **[`itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>`](./include/itkMedialThicknessImageFilter3D.h)**: The [distance](https://itk.org/Doxygen/html/classitk_1_1SignedMaurerDistanceMapImageFilter.html) to the outside along the medial axis.
+-   **[`itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>`](./include/itkMedialThicknessImageFilter3D.h)**: The [distance](https://itk.org/Doxygen/html/classitk_1_1SignedMaurerDistanceMapImageFilter.html) to the outside along the [medial axis](https://github.com/T4mmi/ITKBinaryThinning3D).
 -   **`itk::LocalThicknessImageFilter3D<TInputImage, TOutputImage>`**: *- Work In Progress -* The local thickness filter.
 
 

@@ -13,7 +13,7 @@ except ImportError:
 
 setup(
     name='itk-thickness3d',
-    version='5.0b1',
+    version='5.0a1',
     author='Insight Software Consortium',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],
@@ -25,7 +25,7 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python",
         "Programming Language :: C++",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Intended Audience :: Education",
         "Intended Audience :: Healthcare Industry",

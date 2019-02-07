@@ -1,6 +1,6 @@
-[CircleCI]: https://img.shields.io/circleci/project/github/T4mmi/ITKThickness3D/master.svg?label=Linux
-[TravisCI]: https://img.shields.io/travis/T4mmi/ITKThickness3D/master.svg?label=macOS
-[Appveyor]: https://img.shields.io/appveyor/ci/T4mmi/itkthickness3d.svg?label=Windows
+[CircleCI]: https://img.shields.io/circleci/project/github/InsightSoftwareConsortium/ITKThickness3D/master.svg?label=Linux
+[TravisCI]: https://img.shields.io/travis/InsightSoftwareConsortium/ITKThickness3D/master.svg?label=macOS
+[Appveyor]: https://img.shields.io/appveyor/ci/InsightSoftwareConsortium/itkthickness3d.svg?label=Windows
 [Python version]: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
 [PyPI version]: https://img.shields.io/pypi/v/itk-thickness3d.svg?label=PyPI
 
@@ -42,7 +42,7 @@ Filters
 -------
 
 - **[`itk::BinaryThinningImageFilter3D<TInputImage, TOutputImage>`](include/itkBinaryThinningImageFilter3D.h)**: Compute the 3D [skeleton](http://hdl.handle.net/1926/1292) of the input image.
--   **[`itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>`](./include/itkMedialThicknessImageFilter3D.h)**: The [distance](https://itk.org/Doxygen/html/classitk_1_1SignedMaurerDistanceMapImageFilter.html) to the outside along the [medial axis](https://github.com/T4mmi/ITKBinaryThinning3D).
+-   **[`itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>`](./include/itkMedialThicknessImageFilter3D.h)**: The [distance](https://itk.org/Doxygen/html/classitk_1_1SignedMaurerDistanceMapImageFilter.html) to the outside along the [medial axis](include/itkBinaryThinningImageFilter3D.hxx).
 
 
 Installation
@@ -74,7 +74,7 @@ create a file in ${ITK_SOURCE_CODE}/Modules/Remote called [Thickness3D.remote.cm
 ```
 itk_fetch_module(Thickness3D
   "Tools for 3D thickness measurement"
-  GIT_REPOSITORY ${git_protocol}://github.com/T4mmi/ITKBinaryThinning3D.git
+  GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKBinaryThinning3D.git
   GIT_TAG 67fe3aeb6c5c131b5d364b67565e8d895500e1e3
 )
 ```

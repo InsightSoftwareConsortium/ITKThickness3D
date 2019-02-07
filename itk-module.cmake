@@ -17,7 +17,6 @@ itk_module(Thickness3D
     ITKDistanceMap
     ITKImageIntensity
     ITKImageFilterBase
-    BinaryThinning3D
   COMPILE_DEPENDS
     ITKImageSources    
   TEST_DEPENDS

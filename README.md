@@ -1,6 +1,6 @@
 [CircleCI]: https://img.shields.io/circleci/project/github/InsightSoftwareConsortium/ITKThickness3D/master.svg?label=Linux
 [TravisCI]: https://img.shields.io/travis/InsightSoftwareConsortium/ITKThickness3D/master.svg?label=macOS
-[Appveyor]: https://img.shields.io/appveyor/ci/InsightSoftwareConsortium/itkthickness3d.svg?label=Windows
+[Appveyor]: https://img.shields.io/appveyor/ci/itkrobot/itkthickness3d.svg?label=Windows
 [Python version]: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
 [PyPI version]: https://img.shields.io/pypi/v/itk-thickness3d.svg?label=PyPI
 

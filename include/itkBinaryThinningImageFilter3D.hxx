@@ -132,7 +132,7 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
 
     // prepare Euler LUT [Lee94]
     int eulerLUT[256];
-    fillEulerLUT(eulerLUT);
+    FillEulerLUT(eulerLUT);
     // Loop through the image several times until there is no change.
     int unchangedBorders = 0;
     while (unchangedBorders < 6) // loop until no change for all the six border types
@@ -178,13 +178,13 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
                 }
 
                 // check if point is Euler invariant
-                if (!isEulerInvariant(ot.GetNeighborhood(), eulerLUT))
+                if (!IsEulerInvariant(ot.GetNeighborhood(), eulerLUT))
                 {
                     continue; // current point is not deletable
                 }
 
                 // check if point is simple (deletion does not change connectivity in the 3x3x3 neighborhood)
-                if (!isSimplePoint(ot.GetNeighborhood()))
+                if (!IsSimplePoint(ot.GetNeighborhood()))
                 {
                     continue; // current point is not deletable
                 }
@@ -202,7 +202,7 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
                 thinImage->SetPixel(*simpleBorderPointsIt, NumericTraits<OutputImagePixelType>::Zero);
                 // 2. Check if neighborhood is still connected
                 ot.SetLocation(*simpleBorderPointsIt);
-                if (!isSimplePoint(ot.GetNeighborhood()))
+                if (!IsSimplePoint(ot.GetNeighborhood()))
                 {
                     // we cannot delete current point, so reset
                     thinImage->SetPixel(*simpleBorderPointsIt, NumericTraits<OutputImagePixelType>::One);
@@ -239,7 +239,7 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::GenerateData()
  * Fill the Euler look-up table (LUT) for later check of the Euler invariance. (see [Lee94])
  */
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::fillEulerLUT(int *LUT)
+void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::FillEulerLUT(int *LUT)
 {
     LUT[1] = 1;
     LUT[3] = -1;
@@ -379,7 +379,7 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::fillEulerLUT(int *L
  * Check for Euler invariance. (see [Lee94])
  */
 template <class TInputImage, class TOutputImage>
-bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::isEulerInvariant(NeighborhoodType neighbors, int *LUT)
+bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsEulerInvariant(NeighborhoodType neighbors, int *LUT)
 {
     // calculate Euler characteristic for each octant and sum up
     int EulerChar = 0;
@@ -533,7 +533,7 @@ bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::isEulerInvariant(Ne
  * after this point would have been removed.
  */
 template <class TInputImage, class TOutputImage>
-bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::isSimplePoint(NeighborhoodType neighbors)
+bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsSimplePoint(NeighborhoodType neighbors)
 {
     // copy neighbors for labeling
     int cube[26];
@@ -560,40 +560,40 @@ bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::isSimplePoint(Neigh
             case 9:
             case 10:
             case 12:
-                Octree_labeling(1, label, cube);
+                OctreeLabeling(1, label, cube);
                 break;
             case 2:
             case 5:
             case 11:
             case 13:
-                Octree_labeling(2, label, cube);
+                OctreeLabeling(2, label, cube);
                 break;
             case 6:
             case 7:
             case 14:
             case 15:
-                Octree_labeling(3, label, cube);
+                OctreeLabeling(3, label, cube);
                 break;
             case 8:
             case 16:
-                Octree_labeling(4, label, cube);
+                OctreeLabeling(4, label, cube);
                 break;
             case 17:
             case 18:
             case 20:
             case 21:
-                Octree_labeling(5, label, cube);
+                OctreeLabeling(5, label, cube);
                 break;
             case 19:
             case 22:
-                Octree_labeling(6, label, cube);
+                OctreeLabeling(6, label, cube);
                 break;
             case 23:
             case 24:
-                Octree_labeling(7, label, cube);
+                OctreeLabeling(7, label, cube);
                 break;
             case 25:
-                Octree_labeling(8, label, cube);
+                OctreeLabeling(8, label, cube);
                 break;
             }
             label++;
@@ -608,13 +608,13 @@ bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::isSimplePoint(Neigh
 }
 
 /** 
- * Octree_labeling [Lee94]
+ * OctreeLabeling [Lee94]
  * This is a recursive method that calulates the number of connected
  * components in the 3D neighbourhood after the center pixel would
  * have been removed.
  */
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int octant, int label, int *cube)
+void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::OctreeLabeling(int octant, int label, int *cube)
 {
     // check if there are points in the octant with value 1
     if (octant == 1)
@@ -626,38 +626,38 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[1] == 1)
         {
             cube[1] = label;
-            Octree_labeling(2, label, cube);
+            OctreeLabeling(2, label, cube);
         }
         if (cube[3] == 1)
         {
             cube[3] = label;
-            Octree_labeling(3, label, cube);
+            OctreeLabeling(3, label, cube);
         }
         if (cube[4] == 1)
         {
             cube[4] = label;
-            Octree_labeling(2, label, cube);
-            Octree_labeling(3, label, cube);
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[9] == 1)
         {
             cube[9] = label;
-            Octree_labeling(5, label, cube);
+            OctreeLabeling(5, label, cube);
         }
         if (cube[10] == 1)
         {
             cube[10] = label;
-            Octree_labeling(2, label, cube);
-            Octree_labeling(5, label, cube);
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[12] == 1)
         {
             cube[12] = label;
-            Octree_labeling(3, label, cube);
-            Octree_labeling(5, label, cube);
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(7, label, cube);
         }
     }
     if (octant == 2)
@@ -665,40 +665,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[1] == 1)
         {
             cube[1] = label;
-            Octree_labeling(1, label, cube);
+            OctreeLabeling(1, label, cube);
         }
         if (cube[4] == 1)
         {
             cube[4] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(3, label, cube);
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[10] == 1)
         {
             cube[10] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(5, label, cube);
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[2] == 1)
             cube[2] = label;
         if (cube[5] == 1)
         {
             cube[5] = label;
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[11] == 1)
         {
             cube[11] = label;
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[13] == 1)
         {
             cube[13] = label;
-            Octree_labeling(4, label, cube);
-            Octree_labeling(6, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(6, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 3)
@@ -706,40 +706,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[3] == 1)
         {
             cube[3] = label;
-            Octree_labeling(1, label, cube);
+            OctreeLabeling(1, label, cube);
         }
         if (cube[4] == 1)
         {
             cube[4] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(2, label, cube);
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[12] == 1)
         {
             cube[12] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(5, label, cube);
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[6] == 1)
             cube[6] = label;
         if (cube[7] == 1)
         {
             cube[7] = label;
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[14] == 1)
         {
             cube[14] = label;
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[15] == 1)
         {
             cube[15] = label;
-            Octree_labeling(4, label, cube);
-            Octree_labeling(7, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(7, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 4)
@@ -747,40 +747,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[4] == 1)
         {
             cube[4] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(2, label, cube);
-            Octree_labeling(3, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(3, label, cube);
         }
         if (cube[5] == 1)
         {
             cube[5] = label;
-            Octree_labeling(2, label, cube);
+            OctreeLabeling(2, label, cube);
         }
         if (cube[13] == 1)
         {
             cube[13] = label;
-            Octree_labeling(2, label, cube);
-            Octree_labeling(6, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(6, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[7] == 1)
         {
             cube[7] = label;
-            Octree_labeling(3, label, cube);
+            OctreeLabeling(3, label, cube);
         }
         if (cube[15] == 1)
         {
             cube[15] = label;
-            Octree_labeling(3, label, cube);
-            Octree_labeling(7, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(7, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[8] == 1)
             cube[8] = label;
         if (cube[16] == 1)
         {
             cube[16] = label;
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 5)
@@ -788,40 +788,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[9] == 1)
         {
             cube[9] = label;
-            Octree_labeling(1, label, cube);
+            OctreeLabeling(1, label, cube);
         }
         if (cube[10] == 1)
         {
             cube[10] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(2, label, cube);
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[12] == 1)
         {
             cube[12] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(3, label, cube);
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[17] == 1)
             cube[17] = label;
         if (cube[18] == 1)
         {
             cube[18] = label;
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[20] == 1)
         {
             cube[20] = label;
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[21] == 1)
         {
             cube[21] = label;
-            Octree_labeling(6, label, cube);
-            Octree_labeling(7, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(6, label, cube);
+            OctreeLabeling(7, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 6)
@@ -829,40 +829,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[10] == 1)
         {
             cube[10] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(2, label, cube);
-            Octree_labeling(5, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(5, label, cube);
         }
         if (cube[11] == 1)
         {
             cube[11] = label;
-            Octree_labeling(2, label, cube);
+            OctreeLabeling(2, label, cube);
         }
         if (cube[13] == 1)
         {
             cube[13] = label;
-            Octree_labeling(2, label, cube);
-            Octree_labeling(4, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[18] == 1)
         {
             cube[18] = label;
-            Octree_labeling(5, label, cube);
+            OctreeLabeling(5, label, cube);
         }
         if (cube[21] == 1)
         {
             cube[21] = label;
-            Octree_labeling(5, label, cube);
-            Octree_labeling(7, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(7, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[19] == 1)
             cube[19] = label;
         if (cube[22] == 1)
         {
             cube[22] = label;
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 7)
@@ -870,40 +870,40 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[12] == 1)
         {
             cube[12] = label;
-            Octree_labeling(1, label, cube);
-            Octree_labeling(3, label, cube);
-            Octree_labeling(5, label, cube);
+            OctreeLabeling(1, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(5, label, cube);
         }
         if (cube[14] == 1)
         {
             cube[14] = label;
-            Octree_labeling(3, label, cube);
+            OctreeLabeling(3, label, cube);
         }
         if (cube[15] == 1)
         {
             cube[15] = label;
-            Octree_labeling(3, label, cube);
-            Octree_labeling(4, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[20] == 1)
         {
             cube[20] = label;
-            Octree_labeling(5, label, cube);
+            OctreeLabeling(5, label, cube);
         }
         if (cube[21] == 1)
         {
             cube[21] = label;
-            Octree_labeling(5, label, cube);
-            Octree_labeling(6, label, cube);
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(6, label, cube);
+            OctreeLabeling(8, label, cube);
         }
         if (cube[23] == 1)
             cube[23] = label;
         if (cube[24] == 1)
         {
             cube[24] = label;
-            Octree_labeling(8, label, cube);
+            OctreeLabeling(8, label, cube);
         }
     }
     if (octant == 8)
@@ -911,38 +911,38 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::Octree_labeling(int
         if (cube[13] == 1)
         {
             cube[13] = label;
-            Octree_labeling(2, label, cube);
-            Octree_labeling(4, label, cube);
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(2, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[15] == 1)
         {
             cube[15] = label;
-            Octree_labeling(3, label, cube);
-            Octree_labeling(4, label, cube);
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(3, label, cube);
+            OctreeLabeling(4, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[16] == 1)
         {
             cube[16] = label;
-            Octree_labeling(4, label, cube);
+            OctreeLabeling(4, label, cube);
         }
         if (cube[21] == 1)
         {
             cube[21] = label;
-            Octree_labeling(5, label, cube);
-            Octree_labeling(6, label, cube);
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(5, label, cube);
+            OctreeLabeling(6, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[22] == 1)
         {
             cube[22] = label;
-            Octree_labeling(6, label, cube);
+            OctreeLabeling(6, label, cube);
         }
         if (cube[24] == 1)
         {
             cube[24] = label;
-            Octree_labeling(7, label, cube);
+            OctreeLabeling(7, label, cube);
         }
         if (cube[25] == 1)
             cube[25] = label;

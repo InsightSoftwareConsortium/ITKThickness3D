@@ -150,12 +150,12 @@ protected:
   void ComputeThinImage();
 
   /**  isEulerInvariant [Lee94] */
-  bool isEulerInvariant(NeighborhoodType neighbors, int *LUT);
-  void fillEulerLUT(int *LUT);
+  bool IsEulerInvariant(NeighborhoodType neighbors, int *LUT);
+  void FillEulerLUT(int *LUT);
   /**  isSimplePoint [Lee94] */
-  bool isSimplePoint(NeighborhoodType neighbors);
+  bool IsSimplePoint(NeighborhoodType neighbors);
   /**  Octree_labeling [Lee94] */
-  void Octree_labeling(int octant, int label, int *cube);
+  void OctreeLabeling(int octant, int label, int *cube);
 
 private:
   BinaryThinningImageFilter3D(const Self &); //purposely not implemented

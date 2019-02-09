@@ -18,10 +18,12 @@
 #ifndef itkMedialThicknessImageFilter3D_hxx
 #define itkMedialThicknessImageFilter3D_hxx
 
+
 #include "itkMedialThicknessImageFilter3D.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
+
 
 namespace itk
 {
@@ -29,30 +31,30 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 MedialThicknessImageFilter3D<TInputImage, TOutputImage>::MedialThicknessImageFilter3D()
 {
-    m_DistanceFilter = DistanceType::New();
-    m_DistanceFilter->ReleaseDataFlagOn();
-    m_SkeletonFilter = SkeletonType::New();
-    m_SkeletonFilter->ReleaseDataFlagOn();
-    m_MaskFilter = MaskType::New();
-    m_MaskFilter->SetInput(m_DistanceFilter->GetOutput());
-    m_MaskFilter->SetMaskImage(m_SkeletonFilter->GetOutput());
-}
-
-template <typename TInputImage, typename TOutputImage>
-void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream &os, Indent indent) const
-{
-    Superclass::PrintSelf(os, indent);
+  m_DistanceFilter = DistanceType::New();
+  m_DistanceFilter->ReleaseDataFlagOn();
+  m_SkeletonFilter = SkeletonType::New();
+  m_SkeletonFilter->ReleaseDataFlagOn();
+  m_MaskFilter = MaskType::New();
+  m_MaskFilter->SetInput(m_DistanceFilter->GetOutput());
+  m_MaskFilter->SetMaskImage(m_SkeletonFilter->GetOutput());
 }
 
 template <typename TInputImage, typename TOutputImage>
 void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::GenerateData()
 {
-    m_DistanceFilter->SetInput(this->GetInput());
-    m_SkeletonFilter->SetInput(this->GetInput());
+  m_DistanceFilter->SetInput(this->GetInput());
+  m_SkeletonFilter->SetInput(this->GetInput());
 
-    m_MaskFilter->GraftOutput(this->GetOutput());
-    m_MaskFilter->Update();
-    this->GraftOutput(m_MaskFilter->GetOutput());
+  m_MaskFilter->GraftOutput(this->GetOutput());
+  m_MaskFilter->Update();
+  this->GraftOutput(m_MaskFilter->GetOutput());
+}
+
+template <typename TInputImage, typename TOutputImage>
+void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream &os, Indent indent) const
+{
+  Superclass::PrintSelf(os, indent);
 }
 
 } // end namespace itk

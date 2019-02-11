@@ -19,15 +19,16 @@
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkBinaryThinningImageFilter3D.h"
+#include "itkTestingMacros.h"
 
 #include <iostream>
-using namespace std;
 
 int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
 {
   // Verify the number of parameters in the command line
   if (argc <= 2)
   {
+    std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << std::endl;
     std::cerr << argv[0] << " inputImageFile outputImageFile" << std::endl;
     return EXIT_FAILURE;
@@ -43,22 +44,20 @@ int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
   typedef itk::ImageFileReader<ImageType> ReaderType;
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(infilename);
-  try
-  {
-    reader->Update();
-  }
-  catch (itk::ExceptionObject &ex)
-  {
-    std::cout << ex << std::endl;
-    return EXIT_FAILURE;
-  }
-  cout << infilename << " sucessfully read." << endl;
+
+  TRY_EXPECT_NO_EXCEPTION( reader->Update() );
 
   // Define the thinning filter
   typedef itk::BinaryThinningImageFilter3D<ImageType, ImageType> ThinningFilterType;
   ThinningFilterType::Pointer thinningFilter = ThinningFilterType::New();
+
+  EXERCISE_BASIC_OBJECT_METHODS( thinningFilter, BinaryThinningImageFilter3D,
+    ImageToImageFilter );
+
   thinningFilter->SetInput(reader->GetOutput());
-  thinningFilter->Update();
+
+  TRY_EXPECT_NO_EXCEPTION( thinningFilter->Update() );
+
 
   // output to file
   typedef itk::ImageFileWriter<ImageType> WriterType;
@@ -66,17 +65,9 @@ int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
   writer->SetInput(thinningFilter->GetOutput());
   writer->SetFileName(outfilename);
 
-  try
-  {
-    writer->Update();
-  }
-  catch (itk::ExceptionObject &ex)
-  {
-    std::cout << ex << std::endl;
-    return EXIT_FAILURE;
-  }
-  cout << outfilename << " sucessfully written." << endl;
+  TRY_EXPECT_NO_EXCEPTION( writer->Update() );
 
-  cout << "Program terminated normally." << endl;
+
+  std::cout << "Test finished.";
   return EXIT_SUCCESS;
 }

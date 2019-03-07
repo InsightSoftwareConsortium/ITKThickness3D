@@ -12,24 +12,21 @@ ITKThickness3D
 .. |AppVeyor| image:: https://img.shields.io/appveyor/ci/itkrobot/itkthickness3d.svg
     :target: https://ci.appveyor.com/project/itkrobot/itkthickness3d
 
-=========== =========== ===========
-   Linux      macOS       Windows
-=========== =========== ===========
-|CircleCI|  |TravisCI|  |AppVeyor|
-=========== =========== ===========
+.. |Python| image:: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
+    :target: https://pypi.org/project/itk-thickness3d/
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
+    :target: https://pypi.org/project/itk-thickness3d/
+
+=========== =========== =========== =========== ===========
+   Linux      macOS       Windows     Python     Version
+=========== =========== =========== =========== ===========
+|CircleCI|  |TravisCI|  |AppVeyor|   |Python|     |PyPI|
+=========== =========== =========== =========== ===========
 
 
 Overview
 --------
-
-.. |Python version| image:: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
-    :target: https://pypi.org/project/itk-thickness3d/
-
-.. |PyPI version| image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
-    :target: https://pypi.org/project/itk-thickness3d/
-
-|Python version| |PyPI version|
-
 
 This is a module for the `Insight Toolkit (ITK) <http://itk.org>`_ that
 provides filters that compute the skeleton and thickness transforms of a 3D
@@ -55,23 +52,24 @@ The thinning algorithm used in this module comes from the
 Medial thickness
 ````````````````
 
-The idea behind the **medial thickness** as implemented in this module is *the
-shortest distance from the outside to the object medial axis*.
+The idea behind the **medial thickness** as implemented in this module is
+**twice the shortest distance to the outter shell along the medial axis**
+of the object *(i.e. diameter of the local maximal fitting sphere)*.
 
 This definition provides an *unbiased* method for thickness evaluation compared
 to the *local thickness transform* since this last one will result in a higher
 number of points for thick parts. The skeletonization insure a *minimal* set of
-measurements to fully describe the object.
+measurements to *fully* describe the object.
 
 
 Filters
 -------
 
-- ```itk::BinaryThinningImageFilter3D<TInputImage, TOutputImage>`` 
+- `itk::BinaryThinningImageFilter3D<TInputImage, TOutputImage> 
   <include/itkBinaryThinningImageFilter3D.h>`_: Compute the 3D `skeleton <http://hdl.handle.net/1926/1292>`_ 
   of the input image.
-- ```itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>``
-  </include/itkMedialThicknessImageFilter3D.h>`_: The
+- `itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>
+  </include/itkMedialThicknessImageFilter3D.h>`_: 2x the
   `distance <https://itk.org/Doxygen/html/classitk_1_1SignedMaurerDistanceMapImageFilter.html>`_
   to the outside along the `medial axis <include/itkBinaryThinningImageFilter3D.hxx>`_.
 

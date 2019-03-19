@@ -1,7 +1,10 @@
 ITKThickness3D
 ==============
 
-**An ITK module to compute 3D thickness** 
+**An ITK module to compute 3D thickness**
+
+.. |Azure| image:: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_apis/build/status/InsightSoftwareConsortium.ITKThickness3D?branchName=master
+    :target: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_build/latest?definitionId=17&branchName=master
 
 .. |CircleCI| image:: https://circleci.com/gh/InsightSoftwareConsortium/ITKThickness3D.svg?style=shield
     :target: https://circleci.com/gh/InsightSoftwareConsortium/ITKThickness3D
@@ -18,11 +21,11 @@ ITKThickness3D
 .. |PyPI| image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
     :target: https://pypi.org/project/itk-thickness3d/
 
-=========== =========== =========== =========== ===========
-   Linux      macOS       Windows     Python     Version
-=========== =========== =========== =========== ===========
-|CircleCI|  |TravisCI|  |AppVeyor|   |Python|     |PyPI|
-=========== =========== =========== =========== ===========
+=========== =========== =========== =========== =========== ===========
+   Azure       Linux      macOS       Windows     Python     Version
+=========== =========== =========== =========== =========== ===========
+|Azure|     |CircleCI|  |TravisCI|  |AppVeyor|   |Python|     |PyPI|
+=========== =========== =========== =========== =========== ===========
 
 
 Overview

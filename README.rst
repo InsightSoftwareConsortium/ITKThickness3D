@@ -5,15 +5,7 @@ ITKThickness3D
 
 .. |Azure| image:: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_apis/build/status/InsightSoftwareConsortium.ITKThickness3D?branchName=master
     :target: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_build/latest?definitionId=17&branchName=master
-
-.. |CircleCI| image:: https://circleci.com/gh/InsightSoftwareConsortium/ITKThickness3D.svg?style=shield
-    :target: https://circleci.com/gh/InsightSoftwareConsortium/ITKThickness3D
-
-.. |TravisCI| image:: https://travis-ci.org/InsightSoftwareConsortium/ITKThickness3D.svg?branch=master
-    :target: https://travis-ci.org/InsightSoftwareConsortium/ITKThickness3D
-
-.. |AppVeyor| image:: https://img.shields.io/appveyor/ci/itkrobot/itkthickness3d.svg
-    :target: https://ci.appveyor.com/project/itkrobot/itkthickness3d
+    :alt:    Build Status
 
 .. |Python| image:: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
     :target: https://pypi.org/project/itk-thickness3d/
@@ -21,11 +13,11 @@ ITKThickness3D
 .. |PyPI| image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
     :target: https://pypi.org/project/itk-thickness3d/
 
-=========== =========== =========== =========== =========== ===========
-   Azure       Linux      macOS       Windows     Python     Version
-=========== =========== =========== =========== =========== ===========
-|Azure|     |CircleCI|  |TravisCI|  |AppVeyor|   |Python|     |PyPI|
-=========== =========== =========== =========== =========== ===========
+=========== =========== ===========
+   Azure      Python     Version
+=========== =========== ===========
+|Azure|      |Python|     |PyPI|
+=========== =========== ===========
 
 
 Overview

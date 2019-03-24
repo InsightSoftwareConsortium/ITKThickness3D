@@ -86,7 +86,7 @@ protected:
 
   typedef typename OutputImageType::RegionType OutputRegionType;
 
-  virtual void GenerateData() override;
+  void GenerateData() override;
 
 private:
 #ifdef ITK_USE_CONCEPT_CHECKING

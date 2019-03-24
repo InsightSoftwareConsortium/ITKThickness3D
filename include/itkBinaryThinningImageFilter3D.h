@@ -61,6 +61,8 @@ template <class TInputImage, class TOutputImage>
 class ITK_TEMPLATE_EXPORT BinaryThinningImageFilter3D : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
+  ITK_DISALLOW_COPY_AND_ASSIGN(BinaryThinningImageFilter3D);
+
   /** Standard class typedefs. */
   typedef BinaryThinningImageFilter3D                   Self;
   typedef ImageToImageFilter<TInputImage, TOutputImage> Superclass;
@@ -166,10 +168,6 @@ protected:
    * the 3D neighbourhood after the center pixel would have been removed (see)
    * [Lee94]). */
   void OctreeLabeling(int octant, int label, int *cube);
-
-private:
-  BinaryThinningImageFilter3D(const Self &); //purposely not implemented
-  void operator=(const Self &);              //purposely not implemented
 
 }; // end of BinaryThinningImageFilter3D class
 

@@ -107,7 +107,7 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
   typename std::vector<IndexType>::iterator simpleBorderPointsIt;
 
   // Define offsets
-  typedef typename NeighborhoodIteratorType::OffsetType OffsetType;
+  using OffsetType = typename NeighborhoodIteratorType::OffsetType;
   OffsetType N = {{0, -1, 0}}; // north
   OffsetType S = {{0, 1, 0}};  // south
   OffsetType E = {{1, 0, 0}};  // east

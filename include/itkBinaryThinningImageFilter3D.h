@@ -139,7 +139,7 @@ public:
 
 protected:
   BinaryThinningImageFilter3D();
-  virtual ~BinaryThinningImageFilter3D(){};
+  ~BinaryThinningImageFilter3D() override = default;
   void PrintSelf(std::ostream &os, Indent indent) const override;
 
   /** Compute thinning Image. */

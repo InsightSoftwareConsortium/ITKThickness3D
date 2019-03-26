@@ -164,7 +164,7 @@ protected:
    * after this point would have been removed. */
   bool IsSimplePoint(NeighborhoodType neighbors);
 
-  /** Recursive method that calulates the number of connected components in
+  /** Recursive method that calculates the number of connected components in
    * the 3D neighbourhood after the center pixel would have been removed (see)
    * [Lee94]). */
   void OctreeLabeling(int octant, int label, int *cube);

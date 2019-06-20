@@ -33,6 +33,7 @@ transform and binary skeleton to fill this blank.
 
 Binary thinning
 ```````````````
+Provides a 1 pixel-thin wire skeleton using an efficient `curve thinning <https://doi.org/10.1016/j.patrec.2014.01.012>`_ algorithm. 
 
 The thinning algorithm used in this module comes from the
 `Insight Journal article <http://hdl.handle.net/1926/1292)>`_::
@@ -42,7 +43,6 @@ The thinning algorithm used in this module comes from the
   The Insight Journal - 2007 July - December.
   http://hdl.handle.net/1926/1292
   http://insight-journal.org/browse/publication/181
-
 
 Medial thickness
 ````````````````

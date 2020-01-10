@@ -112,7 +112,7 @@ with the the following contents::
 
   itk_fetch_module(Thickness3D
     "Tools for 3D thickness measurement"
-    GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKBinaryThinning3D.git
+    GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITKThickness3D.git
     GIT_TAG <replace with the latest stable commit tag>
   )
 

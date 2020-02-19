@@ -26,36 +26,36 @@
 namespace itk
 {
 /** \class BinaryThinningImageFilter3D
-*
-* \brief This filter computes one-pixel-wide skeleton of a 3D input image.
-*
-* This class is parametrized over the type of the input image
-* and the type of the output image.
-* 
-* The input is assumed to be a binary image. All non-zero valued voxels
-* are set to 1 internally to simplify the computation. The filter will
-* produce a skeleton of the object.  The output background values are 0,
-* and the foreground values are 1.
-* 
-* A 26-neighbourhood configuration is used for the foreground and a
-* 6-neighbourhood configuration for the background. Thinning is performed
-* symmetrically in order to guarantee that the skeleton lies medial within
-* the object.
-*
-* This filter is a parallel thinning algorithm and is an implementation
-* of the algorithm described in:
-* 
-* T.C. Lee, R.L. Kashyap, and C.N. Chu.
-* Building skeleton models via 3-D medial surface/axis thinning algorithms.
-* Computer Vision, Graphics, and Image Processing, 56(6):462--478, 1994.
-* 
-* To do: Make use of multi-threading.
-*
-* \author Hanno Homann, Oxford University, Wolfson Medical Vision Lab, UK.
-* 
-* \sa MorphologyImageFilter
-* \ingroup ImageEnhancement MathematicalMorphologyImageFilters Thickness3D
-*/
+ *
+ * \brief This filter computes one-pixel-wide skeleton of a 3D input image.
+ *
+ * This class is parametrized over the type of the input image
+ * and the type of the output image.
+ *
+ * The input is assumed to be a binary image. All non-zero valued voxels
+ * are set to 1 internally to simplify the computation. The filter will
+ * produce a skeleton of the object.  The output background values are 0,
+ * and the foreground values are 1.
+ *
+ * A 26-neighbourhood configuration is used for the foreground and a
+ * 6-neighbourhood configuration for the background. Thinning is performed
+ * symmetrically in order to guarantee that the skeleton lies medial within
+ * the object.
+ *
+ * This filter is a parallel thinning algorithm and is an implementation
+ * of the algorithm described in:
+ *
+ * T.C. Lee, R.L. Kashyap, and C.N. Chu.
+ * Building skeleton models via 3-D medial surface/axis thinning algorithms.
+ * Computer Vision, Graphics, and Image Processing, 56(6):462--478, 1994.
+ *
+ * To do: Make use of multi-threading.
+ *
+ * \author Hanno Homann, Oxford University, Wolfson Medical Vision Lab, UK.
+ *
+ * \sa MorphologyImageFilter
+ * \ingroup ImageEnhancement MathematicalMorphologyImageFilters Thickness3D
+ */
 
 template <class TInputImage, class TOutputImage>
 class ITK_TEMPLATE_EXPORT BinaryThinningImageFilter3D : public ImageToImageFilter<TInputImage, TOutputImage>
@@ -112,69 +112,70 @@ public:
   using NeighborhoodType = typename NeighborhoodIteratorType::NeighborhoodType;
 
   /** Get Skeleton by thinning image. */
-  OutputImageType *GetThinning(void);
+  OutputImageType *
+  GetThinning(void);
 
   /** ImageDimension enumeration   */
-  itkStaticConstMacro(InputImageDimension, unsigned int,
-                      TInputImage::ImageDimension);
-  itkStaticConstMacro(OutputImageDimension, unsigned int,
-                      TOutputImage::ImageDimension);
+  itkStaticConstMacro(InputImageDimension, unsigned int, TInputImage::ImageDimension);
+  itkStaticConstMacro(OutputImageDimension, unsigned int, TOutputImage::ImageDimension);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro(SameDimensionCheck,
-                  (Concept::SameDimension<InputImageDimension, 3>));
-  itkConceptMacro(SameTypeCheck,
-                  (Concept::SameType<InputImagePixelType, OutputImagePixelType>));
-  itkConceptMacro(InputAdditiveOperatorsCheck,
-                  (Concept::AdditiveOperators<InputImagePixelType>));
-  itkConceptMacro(InputConvertibleToIntCheck,
-                  (Concept::Convertible<InputImagePixelType, int>));
-  itkConceptMacro(IntConvertibleToInputCheck,
-                  (Concept::Convertible<int, InputImagePixelType>));
-  itkConceptMacro(InputIntComparableCheck,
-                  (Concept::Comparable<InputImagePixelType, int>));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, 3>));
+  itkConceptMacro(SameTypeCheck, (Concept::SameType<InputImagePixelType, OutputImagePixelType>));
+  itkConceptMacro(InputAdditiveOperatorsCheck, (Concept::AdditiveOperators<InputImagePixelType>));
+  itkConceptMacro(InputConvertibleToIntCheck, (Concept::Convertible<InputImagePixelType, int>));
+  itkConceptMacro(IntConvertibleToInputCheck, (Concept::Convertible<int, InputImagePixelType>));
+  itkConceptMacro(InputIntComparableCheck, (Concept::Comparable<InputImagePixelType, int>));
   /** End concept checking */
 #endif
 
 protected:
   BinaryThinningImageFilter3D();
   ~BinaryThinningImageFilter3D() override = default;
-  void PrintSelf(std::ostream &os, Indent indent) const override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Compute thinning Image. */
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
   /** Prepare data. */
-  void PrepareData();
+  void
+  PrepareData();
 
   /** Compute thinning image. */
-  void ComputeThinImage();
+  void
+  ComputeThinImage();
 
   /** Check for Euler invariance (see [Lee94]). */
-  bool IsEulerInvariant(NeighborhoodType neighbors, int *LUT);
+  bool
+  IsEulerInvariant(NeighborhoodType neighbors, int * LUT);
 
   /** Fill the Euler look-up table (LUT) for later check of the Euler
    * invariance (see [Lee94]). */
-  void FillEulerLUT(int *LUT);
+  void
+  FillEulerLUT(int * LUT);
 
   /** Check if the current point is a simple point.
    * This method is named 'N(v)_labeling' in [Lee94].
    * Outputs the number of connected objects in a neighborhood of a point
    * after this point would have been removed. */
-  bool IsSimplePoint(NeighborhoodType neighbors);
+  bool
+  IsSimplePoint(NeighborhoodType neighbors);
 
   /** Recursive method that calculates the number of connected components in
    * the 3D neighbourhood after the center pixel would have been removed (see)
    * [Lee94]). */
-  void OctreeLabeling(int octant, int label, int *cube);
+  void
+  OctreeLabeling(int octant, int label, int * cube);
 
 }; // end of BinaryThinningImageFilter3D class
 
-} //end namespace itk
+} // end namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkBinaryThinningImageFilter3D.hxx"
+#  include "itkBinaryThinningImageFilter3D.hxx"
 #endif
 
 #endif // itkBinaryThinningImageFilter3D_h

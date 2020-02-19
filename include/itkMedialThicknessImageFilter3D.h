@@ -34,7 +34,7 @@ namespace itk
  * The input is assumed to be a binary image. All non-zero valued voxels
  * are set to 1 internally to simplify the computation. The filter will
  * extract a one-pixel-wide skeleton of the object and compute the distance
- * to the object edge. This distance multiplied by 2 is considered the 
+ * to the object edge. This distance multiplied by 2 is considered the
  * local thickness of the object (thickness = center-to-boundary x 2).
  *
  * \ingroup MathematicalMorphologyImageFilters Thickness3D
@@ -82,11 +82,13 @@ protected:
   MedialThicknessImageFilter3D();
   ~MedialThicknessImageFilter3D() override = default;
 
-  void PrintSelf(std::ostream &os, Indent indent) const override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   using OutputRegionType = typename OutputImageType::RegionType;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
 #ifdef ITK_USE_CONCEPT_CHECKING
@@ -97,7 +99,7 @@ private:
 } // namespace itk
 
 #ifndef ITK_MANUAL_INSTANTIATION
-#include "itkMedialThicknessImageFilter3D.hxx"
+#  include "itkMedialThicknessImageFilter3D.hxx"
 #endif
 
 #endif // itkMedialThicknessImageFilter3D

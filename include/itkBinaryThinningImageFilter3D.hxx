@@ -41,24 +41,22 @@ BinaryThinningImageFilter3D<TInputImage, TOutputImage>::BinaryThinningImageFilte
 }
 
 template <class TInputImage, class TOutputImage>
-typename BinaryThinningImageFilter3D<
-    TInputImage, TOutputImage>::OutputImageType *
+typename BinaryThinningImageFilter3D<TInputImage, TOutputImage>::OutputImageType *
 BinaryThinningImageFilter3D<TInputImage, TOutputImage>::GetThinning(void)
 {
-  return dynamic_cast<OutputImageType *>(
-    this->ProcessObject::GetOutput(0));
+  return dynamic_cast<OutputImageType *>(this->ProcessObject::GetOutput(0));
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::PrepareData(void)
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::PrepareData(void)
 {
- // Copy the input image to the output image, changing from the input
- // type to the output type.
+  // Copy the input image to the output image, changing from the input
+  // type to the output type.
 
   OutputImagePointer thinImage = GetThinning();
 
-  InputImagePointer inputImage =
-      dynamic_cast<const TInputImage *>(ProcessObject::GetInput(0));
+  InputImagePointer inputImage = dynamic_cast<const TInputImage *>(ProcessObject::GetInput(0));
 
   thinImage->SetBufferedRegion(thinImage->GetRequestedRegion());
   thinImage->Allocate();
@@ -66,30 +64,31 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::PrepareData(void)
   typename OutputImageType::RegionType region = thinImage->GetRequestedRegion();
 
   ImageRegionConstIterator<TInputImage> it(inputImage, region);
-  ImageRegionIterator<TOutputImage> ot(thinImage, region);
+  ImageRegionIterator<TOutputImage>     ot(thinImage, region);
 
   it.GoToBegin();
   ot.GoToBegin();
 
   // Copy the input to the output, changing all foreground pixels to
   // have value 1 in the process.
-  while(!ot.IsAtEnd())
+  while (!ot.IsAtEnd())
+  {
+    if (it.Get())
     {
-    if(it.Get())
-      {
       ot.Set(NumericTraits<OutputImagePixelType>::One);
-      }
+    }
     else
-      {
+    {
       ot.Set(NumericTraits<OutputImagePixelType>::Zero);
-      }
+    }
     ++it;
     ++ot;
-    }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
 {
   OutputImagePointer thinImage = GetThinning();
 
@@ -103,17 +102,17 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
   NeighborhoodIteratorType ot(radius, thinImage, region);
   ot.SetBoundaryCondition(boundaryCondition);
 
-  std::vector<IndexType> simpleBorderPoints;
+  std::vector<IndexType>                    simpleBorderPoints;
   typename std::vector<IndexType>::iterator simpleBorderPointsIt;
 
   // Define offsets
   using OffsetType = typename NeighborhoodIteratorType::OffsetType;
-  OffsetType N = {{0, -1, 0}}; // north
-  OffsetType S = {{0, 1, 0}};  // south
-  OffsetType E = {{1, 0, 0}};  // east
-  OffsetType W = {{-1, 0, 0}}; // west
-  OffsetType U = {{0, 0, 1}};  // up
-  OffsetType B = {{0, 0, -1}}; // bottom
+  OffsetType N = { { 0, -1, 0 } }; // north
+  OffsetType S = { { 0, 1, 0 } };  // south
+  OffsetType E = { { 1, 0, 0 } };  // east
+  OffsetType W = { { -1, 0, 0 } }; // west
+  OffsetType U = { { 0, 0, 1 } };  // up
+  OffsetType B = { { 0, 0, -1 } }; // bottom
 
   // Prepare Euler LUT [Lee94]
   int eulerLUT[256];
@@ -121,112 +120,112 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::ComputeThinImage()
 
   // Loop through the image several times until there is no change.
   int unchangedBorders = 0;
-  while(unchangedBorders < 6) // loop until no change for all the six border types
-    {
+  while (unchangedBorders < 6) // loop until no change for all the six border types
+  {
     unchangedBorders = 0;
-    for(unsigned int currentBorder = 1; currentBorder <= 6; ++currentBorder)
-      {
+    for (unsigned int currentBorder = 1; currentBorder <= 6; ++currentBorder)
+    {
       // Loop through the image.
-      for(ot.GoToBegin(); !ot.IsAtEnd(); ++ot)
-        {
+      for (ot.GoToBegin(); !ot.IsAtEnd(); ++ot)
+      {
         // Check if point is foreground
-        if(ot.GetCenterPixel() != 1)
-          {
+        if (ot.GetCenterPixel() != 1)
+        {
           continue; // current point is already background
+        }
+        // Check 6-neighbors if point is a border point of type currentBorder
+        bool isBorderPoint = false;
+        if (currentBorder == 1 && ot.GetPixel(N) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (currentBorder == 2 && ot.GetPixel(S) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (currentBorder == 3 && ot.GetPixel(E) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (currentBorder == 4 && ot.GetPixel(W) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (currentBorder == 5 && ot.GetPixel(U) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (currentBorder == 6 && ot.GetPixel(B) <= 0)
+        {
+          isBorderPoint = true;
+        }
+        if (!isBorderPoint)
+        {
+          continue; // current point is not deletable
+        }
+        // Check if point is the end of an arc
+        int numberOfNeighbors = -1;           // -1 and not 0 because the center pixel will be counted as well
+        for (unsigned int i = 0; i < 27; ++i) // i =  0..26
+        {
+          if (ot.GetPixel(i) == 1)
+          {
+            numberOfNeighbors++;
           }
-          // Check 6-neighbors if point is a border point of type currentBorder
-          bool isBorderPoint = false;
-          if(currentBorder == 1 && ot.GetPixel(N) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if(currentBorder == 2 && ot.GetPixel(S) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if(currentBorder == 3 && ot.GetPixel(E) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if(currentBorder == 4 && ot.GetPixel(W) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if(currentBorder == 5 && ot.GetPixel(U) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if (currentBorder == 6 && ot.GetPixel(B) <= 0)
-            {
-            isBorderPoint = true;
-            }
-          if(!isBorderPoint)
-            {
-            continue; // current point is not deletable
-            }
-          // Check if point is the end of an arc
-          int numberOfNeighbors = -1;  // -1 and not 0 because the center pixel will be counted as well
-          for(unsigned int i = 0; i < 27; ++i) // i =  0..26
-            {
-            if(ot.GetPixel(i) == 1)
-              {
-              numberOfNeighbors++;
-              }
-            }
+        }
 
-          if(numberOfNeighbors == 1)
-            {
-            continue; // current point is not deletable
-            }
+        if (numberOfNeighbors == 1)
+        {
+          continue; // current point is not deletable
+        }
 
         // Check if point is Euler invariant
-        if(!this->IsEulerInvariant(ot.GetNeighborhood(), eulerLUT))
-          {
+        if (!this->IsEulerInvariant(ot.GetNeighborhood(), eulerLUT))
+        {
           continue; // current point is not deletable
-          }
+        }
 
         // Check if point is simple (deletion does not change connectivity in the 3x3x3 neighborhood)
-        if(!this->IsSimplePoint(ot.GetNeighborhood()))
-          {
+        if (!this->IsSimplePoint(ot.GetNeighborhood()))
+        {
           continue; // current point is not deletable
-          }
+        }
 
         // Add all simple border points to a list for sequential re-checking
-      simpleBorderPoints.push_back(ot.GetIndex());
+        simpleBorderPoints.push_back(ot.GetIndex());
       }
 
       // Sequential re-checking to preserve connectivity when
       // deleting in a parallel way
       bool noChange = true;
-      for(simpleBorderPointsIt = simpleBorderPoints.begin();
-        simpleBorderPointsIt != simpleBorderPoints.end();
-        ++simpleBorderPointsIt)
-        {
+      for (simpleBorderPointsIt = simpleBorderPoints.begin(); simpleBorderPointsIt != simpleBorderPoints.end();
+           ++simpleBorderPointsIt)
+      {
         // 1. Set simple border point to 0
         thinImage->SetPixel(*simpleBorderPointsIt, NumericTraits<OutputImagePixelType>::Zero);
         // 2. Check if neighborhood is still connected
         ot.SetLocation(*simpleBorderPointsIt);
-        if(!this->IsSimplePoint(ot.GetNeighborhood()))
-          {
+        if (!this->IsSimplePoint(ot.GetNeighborhood()))
+        {
           // We cannot delete current point, so reset
           thinImage->SetPixel(*simpleBorderPointsIt, NumericTraits<OutputImagePixelType>::One);
-          }
+        }
         else
-          {
-          noChange = false;
-          }
-        }
-      if(noChange)
         {
-        unchangedBorders++;
+          noChange = false;
         }
-      simpleBorderPoints.clear();
       }
+      if (noChange)
+      {
+        unchangedBorders++;
+      }
+      simpleBorderPoints.clear();
     }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::GenerateData()
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::GenerateData()
 {
   this->PrepareData();
 
@@ -234,7 +233,8 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::GenerateData()
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::FillEulerLUT(int *LUT)
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::FillEulerLUT(int * LUT)
 {
   LUT[1] = 1;
   LUT[3] = -1;
@@ -371,310 +371,312 @@ void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::FillEulerLUT(int *L
 }
 
 template <class TInputImage, class TOutputImage>
-bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsEulerInvariant(NeighborhoodType neighbors, int *LUT)
+bool
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsEulerInvariant(NeighborhoodType neighbors, int * LUT)
 {
   // Calculate Euler characteristic for each octant and sum up
-  int EulerChar = 0;
+  int           EulerChar = 0;
   unsigned char n;
 
   // Octant SWU
   n = 1;
-  if(neighbors[24] == 1)
-    {
+  if (neighbors[24] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[25] == 1)
-    {
+  }
+  if (neighbors[25] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[15] == 1)
-    {
+  }
+  if (neighbors[15] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[16] == 1)
-    {
+  }
+  if (neighbors[16] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[21] == 1)
-    {
+  }
+  if (neighbors[21] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[22] == 1)
-    {
+  }
+  if (neighbors[22] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[12] == 1)
-    {
+  }
+  if (neighbors[12] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant SEU
   n = 1;
-  if(neighbors[26] == 1)
-    {
+  if (neighbors[26] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[23] == 1)
-    {
+  }
+  if (neighbors[23] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[17] == 1)
-    {
+  }
+  if (neighbors[17] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[14] == 1)
-    {
+  }
+  if (neighbors[14] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[25] == 1)
-    {
+  }
+  if (neighbors[25] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[22] == 1)
-    {
+  }
+  if (neighbors[22] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[16] == 1)
-    {
+  }
+  if (neighbors[16] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant NWU
   n = 1;
-  if(neighbors[18] == 1)
-    {
+  if (neighbors[18] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[21] == 1)
-    {
+  }
+  if (neighbors[21] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[9] == 1)
-    {
+  }
+  if (neighbors[9] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[12] == 1)
-    {
+  }
+  if (neighbors[12] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[19] == 1)
-    {
+  }
+  if (neighbors[19] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[22] == 1)
-    {
+  }
+  if (neighbors[22] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[10] == 1)
-    {
+  }
+  if (neighbors[10] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant NEU
   n = 1;
-  if(neighbors[20] == 1)
-    {
+  if (neighbors[20] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[23] == 1)
-    {
+  }
+  if (neighbors[23] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[19] == 1)
-    {
+  }
+  if (neighbors[19] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[22] == 1)
-    {
+  }
+  if (neighbors[22] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[11] == 1)
-    {
+  }
+  if (neighbors[11] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[14] == 1)
-    {
+  }
+  if (neighbors[14] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[10] == 1)
-    {
+  }
+  if (neighbors[10] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant SWB
   n = 1;
-  if(neighbors[6] == 1)
-    {
+  if (neighbors[6] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[15] == 1)
-    {
+  }
+  if (neighbors[15] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[7] == 1)
-    {
+  }
+  if (neighbors[7] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[16] == 1)
-    {
+  }
+  if (neighbors[16] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[3] == 1)
-    {
+  }
+  if (neighbors[3] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[12] == 1)
-    {
+  }
+  if (neighbors[12] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[4] == 1)
-    {
+  }
+  if (neighbors[4] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant SEB
   n = 1;
-  if(neighbors[8] == 1)
-    {
+  if (neighbors[8] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[7] == 1)
-    {
+  }
+  if (neighbors[7] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[17] == 1)
-    {
+  }
+  if (neighbors[17] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[16] == 1)
-    {
+  }
+  if (neighbors[16] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[5] == 1)
-    {
+  }
+  if (neighbors[5] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[4] == 1)
-    {
+  }
+  if (neighbors[4] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[14] == 1)
-    {
+  }
+  if (neighbors[14] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant NWB
   n = 1;
-  if(neighbors[0] == 1)
-    {
+  if (neighbors[0] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[9] == 1)
-    {
+  }
+  if (neighbors[9] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[3] == 1)
-    {
+  }
+  if (neighbors[3] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[12] == 1)
-    {
+  }
+  if (neighbors[12] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[1] == 1)
-    {
+  }
+  if (neighbors[1] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[10] == 1)
-    {
+  }
+  if (neighbors[10] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[4] == 1)
-    {
+  }
+  if (neighbors[4] == 1)
+  {
     n |= 2;
-    }
+  }
 
   EulerChar += LUT[n];
 
   // Octant NEB
   n = 1;
-  if(neighbors[2] == 1)
-    {
+  if (neighbors[2] == 1)
+  {
     n |= 128;
-    }
-  if(neighbors[1] == 1)
-    {
+  }
+  if (neighbors[1] == 1)
+  {
     n |= 64;
-    }
-  if(neighbors[11] == 1)
-    {
+  }
+  if (neighbors[11] == 1)
+  {
     n |= 32;
-    }
-  if(neighbors[10] == 1)
-    {
+  }
+  if (neighbors[10] == 1)
+  {
     n |= 16;
-    }
-  if(neighbors[5] == 1)
-    {
+  }
+  if (neighbors[5] == 1)
+  {
     n |= 8;
-    }
-  if(neighbors[4] == 1)
-    {
+  }
+  if (neighbors[4] == 1)
+  {
     n |= 4;
-    }
-  if(neighbors[14] == 1)
-    {
+  }
+  if (neighbors[14] == 1)
+  {
     n |= 2;
-    }
+  }
 
-    EulerChar += LUT[n];
+  EulerChar += LUT[n];
 
-  if(EulerChar == 0)
-    {
+  if (EulerChar == 0)
+  {
     return true;
-    }
+  }
   else
-    {
+  {
     return false;
-    }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
-bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsSimplePoint(NeighborhoodType neighbors)
+bool
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsSimplePoint(NeighborhoodType neighbors)
 {
   // Copy neighbors for labeling
   int cube[26];
-  for(unsigned int i = 0; i < 13; ++i) // i =  0..12 -> cube[0..12]
-    {
+  for (unsigned int i = 0; i < 13; ++i) // i =  0..12 -> cube[0..12]
+  {
     cube[i] = neighbors[i];
-    }
+  }
   // i != 13 : ignore center pixel when counting (see [Lee94])
-  for(unsigned int i = 14; i < 27; ++i) // i = 14..26 -> cube[13..25]
-    {
+  for (unsigned int i = 14; i < 27; ++i) // i = 14..26 -> cube[13..25]
+  {
     cube[i - 1] = neighbors[i];
-    }
+  }
   // Set initial label
   int label = 2;
   // Loop over all points in the neighborhood
-  for(unsigned int i = 0; i < 26; ++i)
+  for (unsigned int i = 0; i < 26; ++i)
+  {
+    if (cube[i] == 1) // voxel has not been labelled yet
     {
-    if(cube[i] == 1) // voxel has not been labelled yet
-      {
       // Start recursion with any octant that contains the point i
       switch (i)
-        {
+      {
         case 0:
         case 1:
         case 3:
@@ -717,379 +719,381 @@ bool BinaryThinningImageFilter3D<TInputImage, TOutputImage>::IsSimplePoint(Neigh
         case 25:
           this->OctreeLabeling(8, label, cube);
           break;
-        }
+      }
       label++;
-      if(label - 2 >= 2)
-        {
+      if (label - 2 >= 2)
+      {
         return false;
-        }
       }
     }
-    //return label-2; in [Lee94] if the number of connected compontents would be needed
-    return true;
+  }
+  // return label-2; in [Lee94] if the number of connected compontents would be needed
+  return true;
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::OctreeLabeling(int octant, int label, int *cube)
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::OctreeLabeling(int octant, int label, int * cube)
 {
   // Check if there are points in the octant with value 1
-  if(octant == 1)
-    {
+  if (octant == 1)
+  {
     // Set points in this octant to current label
     // and recurseive labeling of adjacent octants
-    if(cube[0] == 1)
-      {
+    if (cube[0] == 1)
+    {
       cube[0] = label;
-      }
-    if(cube[1] == 1)
-      {
+    }
+    if (cube[1] == 1)
+    {
       cube[1] = label;
       this->OctreeLabeling(2, label, cube);
-      }
-    if(cube[3] == 1)
-      {
+    }
+    if (cube[3] == 1)
+    {
       cube[3] = label;
       this->OctreeLabeling(3, label, cube);
-      }
-    if(cube[4] == 1)
-      {
+    }
+    if (cube[4] == 1)
+    {
       cube[4] = label;
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(4, label, cube);
-      }
-    if(cube[9] == 1)
-      {
+    }
+    if (cube[9] == 1)
+    {
       cube[9] = label;
       this->OctreeLabeling(5, label, cube);
-      }
-    if(cube[10] == 1)
-      {
+    }
+    if (cube[10] == 1)
+    {
       cube[10] = label;
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[12] == 1)
-      {
+    }
+    if (cube[12] == 1)
+    {
       cube[12] = label;
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(7, label, cube);
-      }
     }
+  }
 
-  if(octant == 2)
+  if (octant == 2)
+  {
+    if (cube[1] == 1)
     {
-    if(cube[1] == 1)
-      {
       cube[1] = label;
       this->OctreeLabeling(1, label, cube);
-      }
-    if(cube[4] == 1)
-      {
+    }
+    if (cube[4] == 1)
+    {
       cube[4] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(4, label, cube);
-      }
-    if(cube[10] == 1)
-      {
+    }
+    if (cube[10] == 1)
+    {
       cube[10] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[2] == 1)
-      {
+    }
+    if (cube[2] == 1)
+    {
       cube[2] = label;
-      }
-    if(cube[5] == 1)
-      {
+    }
+    if (cube[5] == 1)
+    {
       cube[5] = label;
       this->OctreeLabeling(4, label, cube);
-      }
-    if(cube[11] == 1)
-      {
+    }
+    if (cube[11] == 1)
+    {
       cube[11] = label;
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[13] == 1)
-      {
+    }
+    if (cube[13] == 1)
+    {
       cube[13] = label;
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(6, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 3)
+  if (octant == 3)
+  {
+    if (cube[3] == 1)
     {
-    if(cube[3] == 1)
-      {
       cube[3] = label;
       this->OctreeLabeling(1, label, cube);
-      }
-    if(cube[4] == 1)
-      {
+    }
+    if (cube[4] == 1)
+    {
       cube[4] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(4, label, cube);
-      }
-    if(cube[12] == 1)
-      {
+    }
+    if (cube[12] == 1)
+    {
       cube[12] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[6] == 1)
-      {
+    }
+    if (cube[6] == 1)
+    {
       cube[6] = label;
-      }
-    if(cube[7] == 1)
-      {
+    }
+    if (cube[7] == 1)
+    {
       cube[7] = label;
       this->OctreeLabeling(4, label, cube);
-      }
-    if(cube[14] == 1)
-      {
+    }
+    if (cube[14] == 1)
+    {
       cube[14] = label;
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[15] == 1)
-      {
+    }
+    if (cube[15] == 1)
+    {
       cube[15] = label;
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(7, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 4)
+  if (octant == 4)
+  {
+    if (cube[4] == 1)
     {
-    if(cube[4] == 1)
-      {
       cube[4] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(3, label, cube);
-      }
-    if(cube[5] == 1)
-      {
+    }
+    if (cube[5] == 1)
+    {
       cube[5] = label;
       this->OctreeLabeling(2, label, cube);
-      }
-    if(cube[13] == 1)
-      {
+    }
+    if (cube[13] == 1)
+    {
       cube[13] = label;
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(6, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[7] == 1)
-      {
+    }
+    if (cube[7] == 1)
+    {
       cube[7] = label;
       this->OctreeLabeling(3, label, cube);
-      }
-    if(cube[15] == 1)
-      {
+    }
+    if (cube[15] == 1)
+    {
       cube[15] = label;
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(7, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[8] == 1)
-      {
+    }
+    if (cube[8] == 1)
+    {
       cube[8] = label;
-      }
-    if(cube[16] == 1)
-      {
+    }
+    if (cube[16] == 1)
+    {
       cube[16] = label;
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 5)
+  if (octant == 5)
+  {
+    if (cube[9] == 1)
     {
-    if(cube[9] == 1)
-      {
       cube[9] = label;
       this->OctreeLabeling(1, label, cube);
-      }
-    if(cube[10] == 1)
-      {
+    }
+    if (cube[10] == 1)
+    {
       cube[10] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[12] == 1)
-      {
+    }
+    if (cube[12] == 1)
+    {
       cube[12] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[17] == 1)
-      {
+    }
+    if (cube[17] == 1)
+    {
       cube[17] = label;
-      }
-    if(cube[18] == 1)
-      {
+    }
+    if (cube[18] == 1)
+    {
       cube[18] = label;
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[20] == 1)
-      {
+    }
+    if (cube[20] == 1)
+    {
       cube[20] = label;
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[21] == 1)
-      {
+    }
+    if (cube[21] == 1)
+    {
       cube[21] = label;
       this->OctreeLabeling(6, label, cube);
       this->OctreeLabeling(7, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 6)
+  if (octant == 6)
+  {
+    if (cube[10] == 1)
     {
-    if(cube[10] == 1)
-      {
       cube[10] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(5, label, cube);
-      }
-    if(cube[11] == 1)
-      {
+    }
+    if (cube[11] == 1)
+    {
       cube[11] = label;
       this->OctreeLabeling(2, label, cube);
-      }
-    if(cube[13] == 1)
-      {
+    }
+    if (cube[13] == 1)
+    {
       cube[13] = label;
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[18] == 1)
-      {
+    }
+    if (cube[18] == 1)
+    {
       cube[18] = label;
       this->OctreeLabeling(5, label, cube);
-      }
-    if(cube[21] == 1)
-      {
+    }
+    if (cube[21] == 1)
+    {
       cube[21] = label;
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(7, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[19] == 1)
-      {
+    }
+    if (cube[19] == 1)
+    {
       cube[19] = label;
-      }
-    if(cube[22] == 1)
-      {
+    }
+    if (cube[22] == 1)
+    {
       cube[22] = label;
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 7)
+  if (octant == 7)
+  {
+    if (cube[12] == 1)
     {
-    if(cube[12] == 1)
-      {
       cube[12] = label;
       this->OctreeLabeling(1, label, cube);
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(5, label, cube);
-      }
-    if(cube[14] == 1)
-      {
+    }
+    if (cube[14] == 1)
+    {
       cube[14] = label;
       this->OctreeLabeling(3, label, cube);
-      }
-    if(cube[15] == 1)
-      {
+    }
+    if (cube[15] == 1)
+    {
       cube[15] = label;
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[20] == 1)
-      {
+    }
+    if (cube[20] == 1)
+    {
       cube[20] = label;
       this->OctreeLabeling(5, label, cube);
-      }
-    if(cube[21] == 1)
-      {
+    }
+    if (cube[21] == 1)
+    {
       cube[21] = label;
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(6, label, cube);
       this->OctreeLabeling(8, label, cube);
-      }
-    if(cube[23] == 1)
-      {
+    }
+    if (cube[23] == 1)
+    {
       cube[23] = label;
-      }
-    if(cube[24] == 1)
-      {
+    }
+    if (cube[24] == 1)
+    {
       cube[24] = label;
       this->OctreeLabeling(8, label, cube);
-      }
     }
+  }
 
-  if(octant == 8)
+  if (octant == 8)
+  {
+    if (cube[13] == 1)
     {
-    if(cube[13] == 1)
-      {
       cube[13] = label;
       this->OctreeLabeling(2, label, cube);
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[15] == 1)
-      {
+    }
+    if (cube[15] == 1)
+    {
       cube[15] = label;
       this->OctreeLabeling(3, label, cube);
       this->OctreeLabeling(4, label, cube);
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[16] == 1)
-      {
+    }
+    if (cube[16] == 1)
+    {
       cube[16] = label;
       this->OctreeLabeling(4, label, cube);
     }
-    if(cube[21] == 1)
-      {
+    if (cube[21] == 1)
+    {
       cube[21] = label;
       this->OctreeLabeling(5, label, cube);
       this->OctreeLabeling(6, label, cube);
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[22] == 1)
-      {
+    }
+    if (cube[22] == 1)
+    {
       cube[22] = label;
       this->OctreeLabeling(6, label, cube);
-      }
-    if(cube[24] == 1)
-      {
+    }
+    if (cube[24] == 1)
+    {
       cube[24] = label;
       this->OctreeLabeling(7, label, cube);
-      }
-    if(cube[25] == 1)
-      {
-      cube[25] = label;
-      }
     }
+    if (cube[25] == 1)
+    {
+      cube[25] = label;
+    }
+  }
 }
 
 template <class TInputImage, class TOutputImage>
-void BinaryThinningImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream &os, Indent indent) const
+void
+BinaryThinningImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 }

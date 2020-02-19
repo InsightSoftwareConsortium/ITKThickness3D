@@ -23,7 +23,8 @@
 
 #include <iostream>
 
-int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
+int
+itkBinaryThinningImageFilter3DTest(int argc, char * argv[])
 {
   // Verify the number of parameters in the command line
   if (argc <= 2)
@@ -33,26 +34,25 @@ int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
     std::cerr << argv[0] << " inputImageFile outputImageFile" << std::endl;
     return EXIT_FAILURE;
   }
-  char *infilename = argv[1];
-  char *outfilename = argv[2];
+  char * infilename = argv[1];
+  char * outfilename = argv[2];
 
-  const unsigned int                        Dimension = 3;
-  typedef unsigned char                     PixelType;
-  typedef itk::Image<PixelType, Dimension>  ImageType;
+  const unsigned int                       Dimension = 3;
+  typedef unsigned char                    PixelType;
+  typedef itk::Image<PixelType, Dimension> ImageType;
 
   // Read image
   typedef itk::ImageFileReader<ImageType> ReaderType;
-  ReaderType::Pointer reader = ReaderType::New();
+  ReaderType::Pointer                     reader = ReaderType::New();
   reader->SetFileName(infilename);
 
-  ITK_TRY_EXPECT_NO_EXCEPTION( reader->Update() );
+  ITK_TRY_EXPECT_NO_EXCEPTION(reader->Update());
 
   // Define the thinning filter
   typedef itk::BinaryThinningImageFilter3D<ImageType, ImageType> ThinningFilterType;
-  ThinningFilterType::Pointer thinningFilter = ThinningFilterType::New();
+  ThinningFilterType::Pointer                                    thinningFilter = ThinningFilterType::New();
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(thinningFilter, BinaryThinningImageFilter3D,
-    ImageToImageFilter );
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(thinningFilter, BinaryThinningImageFilter3D, ImageToImageFilter);
 
   thinningFilter->SetInput(reader->GetOutput());
 
@@ -61,7 +61,7 @@ int itkBinaryThinningImageFilter3DTest(int argc, char *argv[])
 
   // output to file
   typedef itk::ImageFileWriter<ImageType> WriterType;
-  WriterType::Pointer writer = WriterType::New();
+  WriterType::Pointer                     writer = WriterType::New();
   writer->SetInput(thinningFilter->GetOutput());
   writer->SetFileName(outfilename);
 

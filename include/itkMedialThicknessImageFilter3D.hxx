@@ -45,10 +45,11 @@ MedialThicknessImageFilter3D<TInputImage, TOutputImage>::MedialThicknessImageFil
 }
 
 template <typename TInputImage, typename TOutputImage>
-void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::GenerateData()
+void
+MedialThicknessImageFilter3D<TInputImage, TOutputImage>::GenerateData()
 {
   typename InputImageType::Pointer input = InputImageType::New();
-  input->Graft( dynamic_cast<const InputImageType * >( this->GetInput() ));
+  input->Graft(dynamic_cast<const InputImageType *>(this->GetInput()));
   m_DistanceFilter->SetInput(input);
   m_ThinningFilter->SetInput(input);
   m_MultiplyFilter->Update();
@@ -56,7 +57,8 @@ void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::GenerateData()
 }
 
 template <typename TInputImage, typename TOutputImage>
-void MedialThicknessImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream &os, Indent indent) const
+void
+MedialThicknessImageFilter3D<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 }

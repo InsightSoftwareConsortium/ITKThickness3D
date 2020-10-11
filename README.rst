@@ -3,22 +3,16 @@ ITKThickness3D
 
 **An ITK module to compute 3D thickness**
 
-.. |Azure| image:: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_apis/build/status/InsightSoftwareConsortium.ITKThickness3D?branchName=master
-    :target: https://dev.azure.com/InsightSoftwareConsortium/ITKModules/_build/latest?definitionId=17&branchName=master
+.. image:: https://github.com/InsightSoftwareConsortium/ITKThickness3D/workflows/Build,%20test,%20package/badge.svg
     :alt:    Build Status
 
-.. |Python| image:: https://img.shields.io/pypi/pyversions/itk-thickness3d.svg
-    :target: https://pypi.org/project/itk-thickness3d/
+.. image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
+    :target: https://pypi.python.org/pypi/itk-thickness3d
+    :alt: PyPI Version
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/itk-thickness3d.svg
-    :target: https://pypi.org/project/itk-thickness3d/
-
-=========== =========== ===========
-   Azure      Python     Version
-=========== =========== ===========
-|Azure|      |Python|     |PyPI|
-=========== =========== ===========
-
+.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+    :target: https://github.com/InsightSoftwareConsortium/ITKThickness3D/blob/master/LICENSE
+    :alt: License
 
 Overview
 --------

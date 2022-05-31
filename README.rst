@@ -17,7 +17,7 @@ ITKThickness3D
 Overview
 --------
 
-This is a module for the `Insight Toolkit (ITK) <http://itk.org>`_ that
+This is a module for the `Insight Toolkit (ITK) <https://itk.org>`_ that
 provides filters that compute the skeleton and thickness transforms of a 3D
 image.
 
@@ -30,13 +30,13 @@ Binary thinning
 Provides a 1 pixel-thin wire skeleton using an efficient `curve thinning <https://doi.org/10.1016/j.patrec.2014.01.012>`_ algorithm. 
 
 The thinning algorithm used in this module comes from the
-`Insight Journal article <http://hdl.handle.net/1926/1292)>`_::
+`Insight Journal article <https://hdl.handle.net/1926/1292)>`_::
 
   Homann H.
   Implementation of a 3D thinning algorithm
   The Insight Journal - 2007 July - December.
-  http://hdl.handle.net/1926/1292
-  http://insight-journal.org/browse/publication/181
+  https://hdl.handle.net/1926/1292
+  https://insight-journal.org/browse/publication/181
 
 Medial thickness
 ````````````````
@@ -55,7 +55,7 @@ Filters
 -------
 
 - `itk::BinaryThinningImageFilter3D<TInputImage, TOutputImage> 
-  <include/itkBinaryThinningImageFilter3D.h>`_: Compute the 3D `skeleton <http://hdl.handle.net/1926/1292>`_ 
+  <include/itkBinaryThinningImageFilter3D.h>`_: Compute the 3D `skeleton <https://hdl.handle.net/1926/1292>`_ 
   of the input image.
 - `itk::MedialThicknessImageFilter3D<TInputImage, TOutputImage>
   </include/itkMedialThicknessImageFilter3D.h>`_: 2x the
